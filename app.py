@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, url_for, redirect, jsonify
+from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 from sqlalchemy.sql import func
@@ -47,17 +47,20 @@ def get_player(name):
 # create player
 @app.route("/api/players", methods=["POST"])
 def create_player():
-    new_player = Player(
-        name=request.json["name"],
-        team=request.json["team"],
-        position=request.json["position"],
-        height=request.json["height"],
-        weight=request.json["weight"],
-    )
-    db.session.add(new_player)
-    db.session.commit()
+    try:
+        new_player = Player(
+            name=request.json["name"],
+            team=request.json["team"],
+            position=request.json["position"],
+            height=request.json["height"],
+            weight=request.json["weight"],
+        )
+        db.session.add(new_player)
+        db.session.commit()
 
-    return jsonify(new_player.to_dict())
+        return jsonify(new_player.to_dict())
+    except KeyError as e:
+        return jsonify({"error": f"Missing required field: {str(e)}"}), 400
 
 
 # delete player
@@ -92,4 +95,4 @@ def update_player(name):
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-    app.run(debug=True)
+    app.run(debug=True, port="5001")
