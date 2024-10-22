@@ -38,7 +38,7 @@ def get_players():
     return jsonify([player.to_dict() for player in players])
 
 
-@app.route("/api/players/<str:name>", methods=["GET"])
+@app.route("/api/players/<string:name>", methods=["GET"])
 def get_player(name):
     player = Player.query.get_or_404(name)
     return jsonify(player.to_dict())
@@ -50,8 +50,8 @@ def create_player():
         name=request.json["name"],
         team=request.json["team"],
         position=request.json["position"],
-        height=request.json("height"),
-        weight=request.json("weight"),
+        height=request.json["height"],
+        weight=request.json["weight"],
     )
     db.session.add(new_player)
     db.session.commit()
@@ -59,14 +59,15 @@ def create_player():
     return jsonify(new_player.to_dict())
 
 
-@app.route("/api/players/<str:name>", methods=["DELETE"])
+@app.route("/api/players/<string:name>", methods=["DELETE"])
 def del_player(name):
     player = Player.query.get_or_404(name)
     db.session.delete(player)
     db.session.commit()
+    return "", 204
 
 
-@app.route("/api/players/<str:name>", methods=["PUT"])
+@app.route("/api/players/<string:name>", methods=["PUT"])
 def update_player(name):
     player = Player.query.get_or_404(name)
 
@@ -77,9 +78,9 @@ def update_player(name):
     if "position" in request.json:
         player.position = request.json["position"]
     if "height" in request.json:
-        player.height = request.json("height")
+        player.height = request.json["height"]
     if "weight" in request.json:
-        player.weight = request.json("weight")
+        player.weight = request.json["weight"]
 
     db.session.commit()
     return jsonify(player.to_dict())
