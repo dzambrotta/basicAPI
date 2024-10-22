@@ -64,3 +64,22 @@ def del_player(name):
     player = Player.query.get_or_404(name)
     db.session.delete(player)
     db.session.commit()
+
+
+@app.route("/api/players/<str:name>", methods=["PUT"])
+def update_player(name):
+    player = Player.query.get_or_404(name)
+
+    if "name" in request.json:
+        player.name = request.json["name"]
+    if "team" in request.json:
+        player.team = request.json["team"]
+    if "position" in request.json:
+        player.position = request.json["position"]
+    if "height" in request.json:
+        player.height = request.json("height")
+    if "weight" in request.json:
+        player.weight = request.json("weight")
+
+    db.session.commit()
+    return jsonify(player.to_dict())
