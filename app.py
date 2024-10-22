@@ -40,10 +40,11 @@ def get_players():
 
 @app.route("/api/players/<string:name>", methods=["GET"])
 def get_player(name):
-    player = Player.query.get_or_404(name)
+    player = Player.query.filter(Player.name == name).first_or_404()
     return jsonify(player.to_dict())
 
 
+# create player
 @app.route("/api/players", methods=["POST"])
 def create_player():
     new_player = Player(
@@ -59,17 +60,19 @@ def create_player():
     return jsonify(new_player.to_dict())
 
 
+# delete player
 @app.route("/api/players/<string:name>", methods=["DELETE"])
 def del_player(name):
-    player = Player.query.get_or_404(name)
+    player = Player.query.filter(Player.name == name).first_or_404()
     db.session.delete(player)
     db.session.commit()
     return "", 204
 
 
+# update player
 @app.route("/api/players/<string:name>", methods=["PUT"])
 def update_player(name):
-    player = Player.query.get_or_404(name)
+    player = Player.query.filter(Player.name == name).first_or_404()
 
     if "name" in request.json:
         player.name = request.json["name"]
@@ -84,3 +87,9 @@ def update_player(name):
 
     db.session.commit()
     return jsonify(player.to_dict())
+
+
+if __name__ == "__main__":
+    with app.app_context():
+        db.create_all()
+    app.run(debug=True)
